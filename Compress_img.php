@@ -42,11 +42,11 @@ function search_file($folderName){
 if ($_POST['folder'] != '') {
  if ($_POST['maxwidth'] == 0) {
    $_POST['maxwidth'] = 99999;
- }
+ };
  if ($_POST['maxheight'] == 0) {
    $_POST['maxheight'] = 99999;
- }
- if {$_POST['folder'] == ''} {
+ };
+ if ($_POST['folder'] == '') {
   $_POST['folder'] = '.';
  } else {
   $_POST['folder'] = "./".$_POST['folder'];
