@@ -1,13 +1,15 @@
-# Compress IMG
-Programm to compress all images in folder and subfolders, with resize (if it need)
+Compress IMG
+============
 
+PHP programm to compress all images in folder and subfolders, with resize (if it need)
 
-uses:
+Usage
+-----
 
-Copy files on site
+1.  Copy files "Compress_img.php" and "SimpleImage.php" on your site
 
-In Browser yoursite/Compress_img.php
+2.  In browser http://yoursite/Compress_img.php
 
-Set Folder, Max Width and Max Height
+3.  Set Folder, Max Width and Max Height
 
-GO
+4.  GO
