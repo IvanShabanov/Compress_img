@@ -6,7 +6,7 @@ PHP programm to compress all images in folder and subfolders, with resize (if it
 Usage
 -----
 
-1.  Copy files "Compress_img.php" and "SimpleImage.php" on your site
+1.  Copy files "Compress_img.php" on your site
 
 2.  In browser http://yoursite/Compress_img.php
 
