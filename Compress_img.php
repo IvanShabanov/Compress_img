@@ -28,6 +28,8 @@
             } elseif( $image_type == IMAGETYPE_GIF ) {
                imagegif($this->image,$filename);
             } elseif( $image_type == IMAGETYPE_PNG ) {
+               imagealphablending($this->image, false);
+               imagesavealpha($this->image, true);               
                imagepng($this->image,$filename);
             }
             if( $permissions != null) {
@@ -164,6 +166,7 @@ function microtime_float() {
                      (strpos($file, '.gif') > 0 ) or
                      (strpos($file, '.png') > 0 )) {
                          file_put_contents($outputfile, $directory.$file."\n", FILE_APPEND);
+                         
                   }
               } elseif ($file != '.' and $file != '..' and is_dir($directory.$file)) {
                 FileListinfile($directory.$file.'/', $outputfile);
@@ -181,7 +184,6 @@ if ($_GET['step'] == 'start') {
     if (!is_numeric($_POST['maxheight'])) {$_POST['maxheight'] = 99999;};
     @unlink('Compress_img.txt');
     FileListinfile($_POST['folder'], 'Compress_img.txt');
-    file_put_contents('Compress_img_options.txt' ,$_POST['folder'].":".$_POST['maxwidth'].":".$_POST['maxheight'].":".$files_size."\n", FILE_APPEND);
     echo '<script>location.replace("?step=go&n=0&folder='.$_POST['folder'].'&maxwidth='.$_POST['maxwidth'].'&maxheight='.$_POST['maxheight'].'"); </script>';
   } else {
     echo '<p>Error: Folder not set</p>';
@@ -195,31 +197,40 @@ if ($_GET['step'] == 'start') {
   $maxwidth = $_GET['maxwidth'];
   $maxheight = $_GET['maxheight'];
 
+  $bs = $_GET['bs'];
+  $as = $_GET['as'];
+
   $folderName = $folder;
   $curtime=microtime_float();
   $runtime=$curtime-$starttime ;  
   $curfiles = 0;
   while (($runtime < 5) and ($n < count($files)) and ($curfiles < 1000)) {
     $file = trim($files[$n]);
+    $bs += filesize('./'.$file);    
     $img->load('./'.$file);
     if ($maxwidth + $maxheight > 0) {
       if (($img->getWidth() > $maxwidth) or ($img->getHeight() > $maxheight)) {
         $img->resizeInTo($maxwidth, $maxheight);
       }
     }
-    $img->save($file);
+    $img->save($file, $img->image_type);
+    $as += filesize('./'.$file);    
     $curtime=microtime_float();
     $runtime=$curtime-$starttime ;
     $n++;
     $curfiles ++;
   };
-
-  echo  'Current session worktime '.$runtime.'sec. Compressed '.$curfiles.' files. Last file is '.$n.'/'.count($files).' '.$files[$n - 1].'<br />';
+  
+  echo  'Current session worktime '.$runtime.'sec. Compressed '.$curfiles.' files. Last file is '.$n.'/'.count($files).' '.$files[$n - 1].'<br />' .$bs.'bytes -> '.$as.'bytes';
   if ($n < count($files)) {
       $were = '?step=go&n='.$n.
              '&folder='.$_GET['folder'].
              '&maxwidth='.$_GET['maxwidth'].
-             '&maxheight='.$_GET['maxheight'].'';
+             '&maxheight='.$_GET['maxheight'].
+             '&bs='.$bs.
+             '&as='.$as.
+
+             '';
       echo 'Wait <span id="counter">10</span> second<br />';
       echo '<p><a href="'.$were.'">I dont want wait. GO GO GO.</a></p>';
       echo '<script type="text/javascript">
