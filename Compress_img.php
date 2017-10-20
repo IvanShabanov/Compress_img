@@ -1,4 +1,5 @@
 <?php
+   $workfile = $_SERVER['DOCUMENT_ROOT'].'/compress_img.txt';
     class SimpleImage {
        
          var $image;
@@ -166,12 +167,14 @@ function microtime_float() {
                      (strpos($file, '.gif') > 0 ) or
                      (strpos($file, '.png') > 0 )) {
                          file_put_contents($outputfile, $directory.$file."\n", FILE_APPEND);
-                         
+                         echo $outputfile.' <-- '.$directory.$file.'<br>';
                   }
               } elseif ($file != '.' and $file != '..' and is_dir($directory.$file)) {
                 FileListinfile($directory.$file.'/', $outputfile);
               }
             }
+          } else {
+            die('Cannot open dir: '.$directory);
           }
           closedir($handle);
         }
@@ -179,12 +182,17 @@ function microtime_float() {
 /***********************************************************/ 
 
 if ($_GET['step'] == 'start') {
-  if ($_POST['folder'] != '') {
-    if (!is_numeric($_POST['maxwidth'])) {$_POST['maxwidth'] = 99999;};
-    if (!is_numeric($_POST['maxheight'])) {$_POST['maxheight'] = 99999;};
-    @unlink('Compress_img.txt');
-    FileListinfile($_POST['folder'], 'Compress_img.txt');
-    echo '<script>location.replace("?step=go&n=0&folder='.$_POST['folder'].'&maxwidth='.$_POST['maxwidth'].'&maxheight='.$_POST['maxheight'].'"); </script>';
+  if ($_REQUEST['folder'] != '') {
+    if (!is_numeric($_REQUEST['maxwidth'])) {$_REQUEST['maxwidth'] = 99999;};
+    if (!is_numeric($_REQUEST['maxheight'])) {$_REQUEST['maxheight'] = 99999;};
+    @unlink($workfile);
+    $fp = fopen($workfile, "w");
+    fclose($fp);  
+    
+    FileListinfile($_REQUEST['folder'], $workfile);
+    echo '<br/><a href="?step=go&n=0&folder='.$_REQUEST['folder'].'&maxwidth='.$_REQUEST['maxwidth'].'&maxheight='.$_REQUEST['maxheight'].'">NEXT</a>';    
+    
+    echo '<script>location.replace("?step=go&n=0&folder='.$_REQUEST['folder'].'&maxwidth='.$_REQUEST['maxwidth'].'&maxheight='.$_REQUEST['maxheight'].'"); </script>';
   } else {
     echo '<p>Error: Folder not set</p>';
   }
@@ -192,7 +200,11 @@ if ($_GET['step'] == 'start') {
 
   $starttime = microtime_float();
   $n=$_GET['n']+0;
-  $files = file('Compress_img.txt');
+  if (!file_exists($workfile)) {
+    die('File "Compress_img.txt" not exists');
+  }
+  
+  $files = file($workfile);
   $folder = $_GET['folder'];
   $maxwidth = $_GET['maxwidth'];
   $maxheight = $_GET['maxheight'];
@@ -224,9 +236,9 @@ if ($_GET['step'] == 'start') {
   echo  'Current session worktime '.$runtime.'sec. Compressed '.$curfiles.' files. Last file is '.$n.'/'.count($files).' '.$files[$n - 1].'<br />' .$bs.'bytes -> '.$as.'bytes';
   if ($n < count($files)) {
       $were = '?step=go&n='.$n.
-             '&folder='.$_GET['folder'].
-             '&maxwidth='.$_GET['maxwidth'].
-             '&maxheight='.$_GET['maxheight'].
+             '&folder='.$_REQUEST['folder'].
+             '&maxwidth='.$_REQUEST['maxwidth'].
+             '&maxheight='.$_REQUEST['maxheight'].
              '&bs='.$bs.
              '&as='.$as.
 
