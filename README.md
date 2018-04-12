@@ -1,7 +1,9 @@
-Compress IMG
+Compress IMAGES, JPEG, PNG, GIF
 ============
 
 PHP programm to compress all images in folder and subfolders, with resize (if it need)
+Save all JPEG to JPEG progressive
+Allso You can set JPEG quality
 
 Usage
 -----
