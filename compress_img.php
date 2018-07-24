@@ -161,10 +161,10 @@ function microtime_float() {
           if ($handle = opendir($directory)) {
             while (false !== ($file = readdir($handle))) {
               if (is_file($directory.$file)) {
-                  if ((strpos($file, '.jpg') > 0 ) or
-                     (strpos($file, '.jpeg') > 0 ) or
-                     (strpos($file, '.gif') > 0 ) or
-                     (strpos($file, '.png') > 0 )) {
+                  if ((strpos(mb_strtolower($file), '.jpg') > 0 ) or
+                     (strpos(mb_strtolower($file), '.jpeg') > 0 ) or
+                     (strpos(mb_strtolower($file), '.gif') > 0 ) or
+                     (strpos(mb_strtolower($file), '.png') > 0 )) {
                          file_put_contents($outputfile, $directory.$file."\n", FILE_APPEND);
                          
                   }
